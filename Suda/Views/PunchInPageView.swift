@@ -8,9 +8,14 @@
 import SwiftUI
 
 struct PunchInPageView: View {
-    @State private var viewModel = MainHomeViewModel()
+    @State private var viewModel: PunchInPageViewModel
     let bgColor = Color(red: 0.97, green: 0.98, blue: 0.99)
     let cardBgColor = Color(red: 0.92, green: 0.94, blue: 0.96)
+    
+    init(auth: AuthData) {
+        // 初始化 State 包裝的 ViewModel
+        _viewModel = State(initialValue: PunchInPageViewModel(auth: auth))
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,23 +33,61 @@ struct PunchInPageView: View {
                     
                     // --- 2. 今日工作時間區 ---
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("今日工作時間").font(.title3.bold())
+                        Text("今日工作班別").font(.title3.bold())
                         HStack {
-                            Text("應打卡時間").foregroundColor(.gray)
+                            Text("本日班別")
+                                .foregroundColor(.gray)
+                            Spacer()
+                            Text(viewModel.scheduleName)
+                                .fontWeight(.bold)
+                                .foregroundColor(.blue) // 增加醒目度
+                        }
+                        
+                        HStack {
+                            Text("上班應打卡時間").foregroundColor(.gray)
                             Spacer()
                             Text(viewModel.expectedPunchTime)
                         }
                         
+                        HStack {
+                            Text("下班應打卡時間").foregroundColor(.gray)
+                            Spacer()
+                            Text(viewModel.expectedPunchTimeOut)
+                        }
+                        
                         // 地點選擇器
                         Menu {
-                            ForEach(viewModel.locations, id: \.self) { loc in
-                                Button(loc) { viewModel.selectedLocation = loc }
-                            }
+                            // 檢查是否有地點資料，若無則顯示提示
+                                if viewModel.punchPoints.isEmpty {
+                                    Button("讀取中...") { }
+                                        .disabled(true)
+                                } else {
+                                    ForEach(viewModel.punchPoints) { point in
+                                        Button {
+                                            // 選中後更新選中的物件
+                                            viewModel.selectedPoint = point
+                                        } label: {
+                                            HStack {
+                                                Text(point.name)
+                                                if viewModel.selectedPoint?.id == point.id {
+                                                    Image(systemName: "checkmark")
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                         } label: {
                             HStack {
-                                Text(viewModel.selectedLocation)
-                                Spacer()
-                                Image(systemName: "chevron.up.chevron.down").font(.caption)
+                                    // 顯示目前選中的地點名稱，如果還沒選到則顯示預設文字
+                                    Text(viewModel.selectedPoint?.name ?? "請選擇打卡地點")
+                                        .fontWeight(.medium)
+                                    
+                                    Spacer()
+                                    
+                                    // 箭頭圖示
+                                    Image(systemName: "chevron.up.chevron.down")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
                             }
                             .padding()
                             .background(Color.white)
@@ -94,5 +137,29 @@ struct PunchInPageView: View {
             .padding(.bottom, 30) // 留一點空間給 TabBar
         }
         .background(bgColor.ignoresSafeArea())
+        .alert("系統提示", isPresented: $viewModel.showAlert) {
+            Button("確定", role: .cancel) {
+                // 可以在這裡放按下確定後的動作
+            }
+        } message: {
+            Text(viewModel.alertMessage) // 顯示 ViewModel 傳過來的訊息
+        }
+        .overlay {
+            if viewModel.isPunching {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                    VStack(spacing: 15) {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                        Text("正在驗證位置...")
+                            .foregroundColor(.white)
+                    }
+                    .padding(30)
+                    .background(.secondary)
+                    .cornerRadius(15)
+                }
+            }
+        }
     }
 }

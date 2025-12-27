@@ -68,7 +68,8 @@ class LoginViewModel {
                 let auth = AuthData(
                     userId: self.username,
                     token: self.tempToken,
-                    serverUrl: self.fullServerUrl
+                    serverUrl: self.fullServerUrl,
+                    deviceUuid: UIDevice.current.identifierForVendor?.uuidString ?? "Unknown-UUID"
                 )
                 modelContext.insert(auth)
                 try? modelContext.save()
