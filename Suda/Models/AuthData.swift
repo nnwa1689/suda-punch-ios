@@ -14,11 +14,13 @@ final class AuthData {
     var token: String
     var serverUrl: String
     var lastLoginDate: Date
+    var deviceUuid: String?
     
-    init(userId: String, token: String, serverUrl: String) {
+    init(userId: String, token: String, serverUrl: String, deviceUuid: String) {
         self.userId = userId
         self.token = token
         self.serverUrl = serverUrl
         self.lastLoginDate = Date()
+        self.deviceUuid = deviceUuid
     }
 }

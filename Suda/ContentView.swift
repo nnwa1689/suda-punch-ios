@@ -10,7 +10,7 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(AppState.self) private var appState
-    //@Query private var items: [Item]
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         Group {
@@ -25,6 +25,13 @@ struct ContentView: View {
                 // 否則停留在登入頁
                 LoginView()
                     .transition(.opacity)
+            }
+        }
+        .onAppear{
+            let descriptor = FetchDescriptor<AuthData>()
+            
+            if let records = try? modelContext.fetch(descriptor), !records.isEmpty {
+                appState.isLoggedIn = true
             }
         }
 //        NavigationSplitView {
