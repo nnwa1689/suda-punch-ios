@@ -99,7 +99,6 @@ class PunchHistoryViewModel {
             }
             
             // 這裡可以進階計算 duration (下班減上班)
-<<<<<<< HEAD
             if tempDict[dateKey] == nil{
                 tempDict[dateKey] = current
             } else if(tempDict[dateKey]?.checkInTime == "--:--"){
@@ -108,16 +107,10 @@ class PunchHistoryViewModel {
                 tempDict[dateKey]?.checkOutTime = current.checkInTime
             }
             
-=======
-            tempDict[dateKey] = current
->>>>>>> c1a97880e766f05619e23c61c38e04db2e0177fe
         }
         
         // 依照日期排序回傳
         return tempDict.values.sorted { $0.date > $1.date }
     }
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> c1a97880e766f05619e23c61c38e04db2e0177fe
