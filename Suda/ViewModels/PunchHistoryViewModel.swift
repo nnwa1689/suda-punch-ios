@@ -47,10 +47,13 @@ class PunchHistoryViewModel {
     }
 
     func fetchHistory(serverUrl: String, token: String) async {
+
         try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 秒
         await MainActor.run {
             self.isLoading = true
         }
+
+        isLoading = true
         
         // 1. 準備時間範圍 (月初到月底)
         let startDate = "\(selectedYear)-\(selectedMonth)-01"
@@ -96,6 +99,7 @@ class PunchHistoryViewModel {
             }
             
             // 這裡可以進階計算 duration (下班減上班)
+<<<<<<< HEAD
             if tempDict[dateKey] == nil{
                 tempDict[dateKey] = current
             } else if(tempDict[dateKey]?.checkInTime == "--:--"){
@@ -104,10 +108,16 @@ class PunchHistoryViewModel {
                 tempDict[dateKey]?.checkOutTime = current.checkInTime
             }
             
+=======
+            tempDict[dateKey] = current
+>>>>>>> c1a97880e766f05619e23c61c38e04db2e0177fe
         }
         
         // 依照日期排序回傳
         return tempDict.values.sorted { $0.date > $1.date }
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> c1a97880e766f05619e23c61c38e04db2e0177fe
