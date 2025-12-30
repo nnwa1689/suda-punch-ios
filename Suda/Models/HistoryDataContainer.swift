@@ -25,5 +25,5 @@ struct DailyRecord: Identifiable {
     let date: String
     var checkInTime: String = "--:--"
     var checkOutTime: String = "--:--"
-    var duration: String = "0 小時"
+    var workingHours: String = "0.0"
 }

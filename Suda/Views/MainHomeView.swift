@@ -24,7 +24,7 @@ struct MainHomeView: View {
                     .tag(1)
                 
                 // 3. 設定頁面
-                Text("設定頁面建設中...")
+                SettingsView(auth: auth)
                     .tabItem {
                         Label("設定", systemImage: "gearshape")
                     }

@@ -15,6 +15,7 @@ final class AuthData {
     var serverUrl: String
     var lastLoginDate: Date
     var deviceUuid: String?
+    var appVersion = "v0.1.0 (2025/12/30)"
     
     init(userId: String, token: String, serverUrl: String, deviceUuid: String) {
         self.userId = userId

@@ -9,8 +9,8 @@ import SwiftUI
 
 struct PunchInPageView: View {
     @State private var viewModel: PunchInPageViewModel
-    let bgColor = Color(red: 0.97, green: 0.98, blue: 0.99)
-    let cardBgColor = Color(red: 0.92, green: 0.94, blue: 0.96)
+    //let bgColor = Color(red: 0.97, green: 0.98, blue: 0.99)
+    //let cardBgColor = Color(red: 0.92, green: 0.94, blue: 0.96)
     
     init(auth: AuthData) {
         // 初始化 State 包裝的 ViewModel
@@ -130,13 +130,13 @@ struct PunchInPageView: View {
                     Text("下班打卡")
                         .font(.headline).bold()
                         .frame(maxWidth: .infinity).frame(height: 55)
-                        .background(cardBgColor).foregroundColor(.black).cornerRadius(15)
+                        .background(Color.cardBgColor).foregroundColor(.black).cornerRadius(15)
                 }
             }
             .padding(.horizontal, 25)
             .padding(.bottom, 30) // 留一點空間給 TabBar
         }
-        .background(bgColor.ignoresSafeArea())
+        .background(Color.bgColor.ignoresSafeArea())
         .alert("系統提示", isPresented: $viewModel.showAlert) {
             Button("確定", role: .cancel) {
                 // 可以在這裡放按下確定後的動作
