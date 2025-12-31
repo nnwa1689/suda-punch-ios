@@ -16,18 +16,6 @@ struct SudaApp: App {
         WindowGroup {
             ContentView()
             .environment(appState)
-//            TabView {
-//                ContentView()
-//                    .tabItem {
-//                        Label("Journal", systemImage: "book")
-//                    }
-//                LoginView()
-//                    .tabItem {
-//                        Label("Settings", systemImage: "gear")
-//                    }
-//            }
-            //ContentView()
-            
         }
         .modelContainer(for: AuthData.self)
     }

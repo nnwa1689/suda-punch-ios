@@ -1,7 +1,12 @@
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(AppState.self) private var appState
     @State private var viewModel: SettingsViewModel
+    @State private var showUnbindAlert = false
+    @State private var unbindSuccess = false // 用於判斷是否執行後續登出動作
     //let bgColor = Color(red: 0.97, green: 0.98, blue: 0.99)
     //let cardBgColor = Color(red: 0.92, green: 0.94, blue: 0.96)
     
@@ -51,8 +56,9 @@ struct SettingsView: View {
                         
                         // --- 底部版本資訊 ---
                         VStack(spacing: 4) {
-                            Text("APP版本 :\(viewModel.appVersion)")
+                            Text("APP版本 :\(Bundle.main.fullVersionString)")
                             Text("API連線位置: \(viewModel.serverUrl)")
+                            Text("API版本: \(viewModel.apiVersion)")
                         }
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -63,19 +69,59 @@ struct SettingsView: View {
                 
                 // --- 登出按鈕 ---
                 Button(action: {
-                    // 執行登出動作
+                    showUnbindAlert = true
                 }) {
-                    Text("登出並解除裝置綁定")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 55)
-                        .background(Color.red.opacity(0.85))
-                        .cornerRadius(28)
+                    HStack {
+                        if viewModel.isUnbinding {
+                            ProgressView().tint(.white)
+                            Text("處理中...")
+                        } else {
+                            Text("登出並解除裝置綁定")
+                        }
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 55)
+                    .background(Color.red.opacity(0.85))
+                    .cornerRadius(28)
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
+                .disabled(viewModel.isUnbinding)
             }
+        }
+        .alert("解除裝置綁定", isPresented: $showUnbindAlert) {
+            Button("取消", role: .cancel) { }
+            Button("確定解除", role: .destructive) {
+                Task{
+                    let success = await viewModel.performUnbind()
+                    
+                    if success {
+                        await MainActor.run {
+                            do{
+                                // 從 SwiftData 移除這筆資料
+                                try modelContext.delete(model: AuthData.self)
+                                try? modelContext.save()
+                                appState.isLoggedIn = false
+                                print("DEBUG: 本地 AuthData 已成功刪除，App 將反應式地回到登入頁")
+                            } catch {
+                                // 💡 處理錯誤（例如：磁碟空間不足或資料庫鎖定）
+                                print("清除資料時發生錯誤: \(error.localizedDescription)")
+                                viewModel.errorMessage = "本地資料清除失敗，請嘗試手動重開 App"
+                                viewModel.showAlert = true
+                            }
+                        }
+                    }
+                }
+            }
+        } message: {
+            Text("解除綁定後，這台手機將無法繼續打卡。確定要執行嗎？")
+        }
+        .alert("提示", isPresented: $viewModel.showAlert) {
+            Button("取消", role: .cancel) { }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
         }
     }
     

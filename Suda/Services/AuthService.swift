@@ -74,4 +74,99 @@ class AuthService {
             throw NetworkError.requestFailed(decoded.message ?? "設備綁定失敗")
         }
     }
+    
+    func unbindDevice(baseURL: String, empId: String, uuid: String, token: String) async throws -> (Bool, String) {
+        var components = URLComponents(string: "\(baseURL)/api/v1/device/unbind")
+        guard let url = components?.url else { throw URLError(.badURL) }
+        
+        // 2. 配置 Request
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE" // 💡 修改為 DELETE
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        // 3. 配置 Body 內容
+        let body: [String: Any] = [
+            "employeeId": empId,
+            "deviceUuid": uuid,
+            "deviceType": "ios"
+        ]
+            
+        // 將 Dictionary 轉為 JSON Data
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // 💡 修正處：檢查 HTTP 狀態碼
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return (false, "無效的伺服器回應")
+        }
+
+        // 3. 解析結果
+        // 如果是 200 系列，正常解析成功訊息
+        if (200...299).contains(httpResponse.statusCode) {
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let success = json["success"] as? Bool {
+                let message = json["message"] as? String ?? "成功"
+                return (success, message)
+            }
+            return (true, "解除綁定完成")
+        }
+        // 💡 處理 400 系列或其他錯誤
+        else {
+            let serverOutput = String(data: data, encoding: .utf8) ?? ""
+            print("HTTP Status: \(httpResponse.statusCode)")
+            print("Server Response: \(serverOutput)")
+
+            // 2. 嘗試解析 JSON
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                
+                // 💡 直接取出 message (型別設為 Any)
+                let messageValue = json["message"]
+                var finalMessage = ""
+
+                if let messageArray = messageValue as? [String] {
+                    // 如果是陣列，直接變成字串 (例如: "error1, error2")
+                    finalMessage = messageArray.joined(separator: ", ")
+                } else if let messageString = messageValue as? String {
+                    // 如果本來就是字串
+                    finalMessage = messageString
+                } else {
+                    // 如果 message 欄位不存在，改抓 error 欄位或顯示狀態碼
+                    finalMessage = json["error"] as? String ?? "請求失敗 (\(httpResponse.statusCode))"
+                }
+
+                return (false, finalMessage)
+            }
+            return (false, serverOutput.isEmpty ? "伺服器錯誤" : serverOutput)
+        }
+    }
+    
+    func fetchApiInfo(baseURL: String) async throws -> String {
+        // 1. 建立 URL
+        guard let url = URL(string: "\(baseURL)") else { // 假設路徑為 info
+            throw URLError(.badURL)
+        }
+        
+        // 2. 配置 Request (GET 是預設，所以不特別寫也行，但建議寫清楚)
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        // 3. 發送請求
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // 4. 檢查 HTTP 狀態
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        // 5. 解析 JSON
+        // 這裡 Data 是 String 型別 ("v1.0")
+        let decodedResponse = try JSONDecoder().decode(BaseResponse<String>.self, from: data)
+        
+        return decodedResponse.data ?? "" // 回傳 "v1.0"
+    }
 }

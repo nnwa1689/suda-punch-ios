@@ -15,3 +15,18 @@ extension Color {
     static let bgColor = Color(red: 0.97, green: 0.98, blue: 0.99)
     static let cardBgColor = Color(red: 0.92, green: 0.94, blue: 0.96)
 }
+
+extension Bundle {
+    var appVersion: String {
+        return infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+    }
+
+    var buildNumber: String {
+        return infoDictionary?["CFBundleVersion"] as? String ?? "1"
+    }
+    
+    // 格式化輸出：1.0.1 (Build 5)
+    var fullVersionString: String {
+        return "\(appVersion) (Build \(buildNumber))"
+    }
+}
