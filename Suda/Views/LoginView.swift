@@ -54,17 +54,6 @@ struct LoginView: View {
                 CustomSecureField(placeholder: "請輸入密碼", text: $viewModel.password)
             }
             
-            // 4. 記住登入狀態 - 目前登入就會綁定裝置，故必定記住登入狀態
-//            HStack {
-//                Text("記住登入狀態")
-//                    .foregroundStyle(.secondary)
-//                Spacer()
-//                Toggle("", isOn: $rememberMe)
-//                    .labelsHidden()
-//                    .toggleStyle(CheckboxToggleStyle()) // 自定義勾選框樣式
-//            }
-//            .padding(.horizontal, 5)
-            
             // 5. 登入按鈕
             Button(action: {
                 Task { await viewModel.startLoginProcess(protocolPrefix: protocolSelection) }

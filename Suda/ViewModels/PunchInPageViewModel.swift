@@ -8,8 +8,10 @@ import CoreLocation
 class PunchInPageViewModel {
     private let punchService = PunchService()
     private let scheduleService = ScheduleService()
+    private let userService = UserService()
     
     var locationManager: LocationManager? // 用於獲取經緯度
+    var userIsActive = true
     
     var serverUrl: String = ""
     var userToken: String = ""
@@ -24,8 +26,8 @@ class PunchInPageViewModel {
     var expectedPunchTime: String = "--:--"
     var expectedPunchTimeOut: String = "--:--"
 
-    var lastPunchTime: String = "8:58 AM"
-    var lastPunchLocation: String = "公司"
+    var lastPunchTime: String = "--:--"
+    var lastPunchLocation: String = "--"
     
     var punchPoints: [PunchPoint] = []
     var selectedPoint: PunchPoint? // 當前選中的地點
@@ -36,6 +38,7 @@ class PunchInPageViewModel {
     var isPunching: Bool = false      // 控制按鈕是否正在轉圈圈/禁用
     var showAlert: Bool = false       // 控制 .alert 彈窗是否顯示
     var alertMessage: String = ""     // 存儲 API 回傳的成功或錯誤訊息
+    
     
     // 儲存從伺服器拿到的 Date 物件
     private var serverDate: Date?
@@ -49,12 +52,12 @@ class PunchInPageViewModel {
         self.employeeId = auth.userId
         self.deviceUuid = auth.deviceUuid ?? ""
         
-        // 啟動時間校準
         Task {
             await fetchInitialServerTime()
             await fetchPunchPoints()
             await fetchTodaySchedule()
             await fetchLastPunch()
+            await fetchSelfUserInfo()
         }
     }
     
@@ -251,6 +254,20 @@ class PunchInPageViewModel {
         } catch {
             print("取得上次打卡失敗: \(error)")
             self.lastPunchInfo = "無紀錄"
+        }
+    }
+    
+    func fetchSelfUserInfo() async {
+        do {
+            let userInfo = try await userService.getSelfUser(serverUrl: self.serverUrl, token: self.userToken)
+            
+            if userInfo.statusCode == 404 {
+                self.userIsActive = false
+            }
+
+            
+        } catch {
+            self.userIsActive = false
         }
     }
 }

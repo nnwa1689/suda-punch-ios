@@ -5,5 +5,5 @@ import SwiftData
 @Observable
 @MainActor
 class MainHomeViewModel {
-    
+
 }
