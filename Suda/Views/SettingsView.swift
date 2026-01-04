@@ -25,13 +25,14 @@ struct SettingsView: View {
                     VStack(spacing: 24) {
                         // --- 使用者資訊區 ---
                         VStack(spacing: 8) {
+                            UserAvatarView(username: viewModel.employeeName, size: 100)
                             Text(viewModel.employeeName)
                                 .font(.system(size: 28, weight: .bold))
-                                .foregroundColor(.primary)
+                                .foregroundColor(Color.textPrimary)
                             
                             Text("到職日期: \(viewModel.hireDate)")
                                 .font(.system(size: 16))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(Color.textSecondary)
                         }
                         .padding(.top, 40)
                         
@@ -41,6 +42,7 @@ struct SettingsView: View {
                                 .font(.headline)
                                 .padding(.leading, 4)
                                 .padding(.bottom, 8)
+                                .foregroundColor(Color.textPrimary)
                             
                             VStack(spacing: 0) {
                                 infoRow(title: "帳號", value: viewModel.employeeId)
@@ -50,7 +52,8 @@ struct SettingsView: View {
                                 infoRow(title: "綁定打卡手機 UUID", value: viewModel.deviceUuid)
                             }
                             .background(Color.cardBgColor) // 使用你定義的卡片色
-                            .cornerRadius(16)
+                            .cornerRadius(15)
+                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                         }
                         .padding(.horizontal)
                         
@@ -61,7 +64,7 @@ struct SettingsView: View {
                             Text("API版本: \(viewModel.apiVersion)")
                         }
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.textSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.top, 20)
                     }
@@ -131,15 +134,44 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.system(size: 15, weight: .medium))
-                .foregroundColor(.primary)
+                .foregroundColor(Color.textPrimary)
             Text(value)
                 .font(.system(size: 14))
-                .foregroundColor(.secondary)
+                .foregroundColor(Color.textSecondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct UserAvatarView: View {
+    let username: String
+    let size: CGFloat
+    
+    // 取得第一個字
+    private var firstLetter: String {
+        username.prefix(1).uppercased()
+    }
+    
+    // 根據名字固定產生顏色（這樣同一個人的顏色就不會變）
+    private var backgroundColor: Color {
+        let colors: [Color] = [.blue, .green, .orange, .purple, .pink, .teal]
+        let index = abs(username.hashValue) % colors.count
+        return colors[index]
+    }
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(backgroundColor)
+                .frame(width: size, height: size)
+            
+            Text(firstLetter)
+                .font(.system(size: size * 0.45, weight: .bold))
+                .foregroundColor(.white)
+        }
     }
 }

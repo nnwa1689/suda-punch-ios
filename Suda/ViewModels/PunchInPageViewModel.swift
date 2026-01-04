@@ -11,7 +11,6 @@ class PunchInPageViewModel {
     private let userService = UserService()
     
     var locationManager: LocationManager? // 用於獲取經緯度
-    var userIsActive = true
     
     var serverUrl: String = ""
     var userToken: String = ""
@@ -30,7 +29,17 @@ class PunchInPageViewModel {
     var lastPunchLocation: String = "--"
     
     var punchPoints: [PunchPoint] = []
-    var selectedPoint: PunchPoint? // 當前選中的地點
+    var selectedPoint: PunchPoint? {
+        didSet {
+            if let id = selectedPoint?.id {
+                UserDefaults.standard.set(id, forKey: "LastPunchPointID")
+                print("DEBUG: 已儲存上次打卡點 ID: \(id)")
+            } else {
+                // 如果被設為 nil，可以考慮移除紀錄
+                UserDefaults.standard.removeObject(forKey: "LastPunchPointID")
+            }
+        }
+    }
     
     var lastPunchInfo: String = "尚無紀錄"
     var lastPunchRemark: String? = nil
@@ -57,7 +66,6 @@ class PunchInPageViewModel {
             await fetchPunchPoints()
             await fetchTodaySchedule()
             await fetchLastPunch()
-            await fetchSelfUserInfo()
         }
     }
     
@@ -67,6 +75,7 @@ class PunchInPageViewModel {
             let response = try await authService.getServerTime(serverUrl: serverUrl)
             if let timeData = response.data {
                 let formatter = DateFormatter()
+                formatter.locale = Locale(identifier: "zh_Hant_TW@hours=24")
                 formatter.timeZone = TimeZone(identifier: timeData.timeZone)
                 formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
@@ -98,7 +107,8 @@ class PunchInPageViewModel {
         
         // 更新 UI 字串
         let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "hh:mm:ss aa"
+        timeFormatter.locale = Locale(identifier: "zh_Hant_TW@hours=24")
+        timeFormatter.dateFormat = "HH:mm:ss"
         self.currentTime = timeFormatter.string(from: newDate)
         
         let dateFormatter = DateFormatter()
@@ -185,8 +195,7 @@ class PunchInPageViewModel {
             // 💡 因為是 BaseResponse<[PunchPoint]>，所以 data 就是陣列
             if let points = response.data {
                 self.punchPoints = points.filter { $0.isActive }
-                // 預設選中第一個地點
-                self.selectedPoint = self.punchPoints.first
+                checkIfLastPointIsAvailable()
             }
         } catch {
             print("取得打卡點失敗: \(error)")
@@ -257,17 +266,20 @@ class PunchInPageViewModel {
         }
     }
     
-    func fetchSelfUserInfo() async {
-        do {
-            let userInfo = try await userService.getSelfUser(serverUrl: self.serverUrl, token: self.userToken)
-            
-            if userInfo.statusCode == 404 {
-                self.userIsActive = false
-            }
-
-            
-        } catch {
-            self.userIsActive = false
+    func checkIfLastPointIsAvailable() {
+        // 從手機讀取上次存的 ID
+        guard let lastID = UserDefaults.standard.string(forKey: "LastPunchPointID") else {
+            // 如果從來沒存過，預設選第一個
+            self.selectedPoint = punchPoints.first
+            return
+        }
+        
+        // 檢查上次存的 ID 是否還在這次 API 回傳的列表裡
+        if let foundPoint = punchPoints.first(where: { $0.id == lastID }) {
+            self.selectedPoint = foundPoint
+        } else {
+            // 如果上次的地點失效了（API沒回傳），則預設選第一個
+            self.selectedPoint = punchPoints.first
         }
     }
 }

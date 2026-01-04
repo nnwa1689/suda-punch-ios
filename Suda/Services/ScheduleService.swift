@@ -14,6 +14,7 @@ struct ScheduleService {
         
         // 2. 配置 Request
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")

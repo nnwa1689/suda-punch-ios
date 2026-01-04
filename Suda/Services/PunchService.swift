@@ -9,6 +9,7 @@ struct PunchService {
         }
         
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -29,6 +30,7 @@ struct PunchService {
         }
         
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -63,6 +65,7 @@ struct PunchService {
         }
         
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.httpMethod = "POST"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -100,6 +103,7 @@ struct PunchService {
         }
         
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

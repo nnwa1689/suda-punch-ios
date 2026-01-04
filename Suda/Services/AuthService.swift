@@ -51,6 +51,7 @@ class AuthService {
         let uuid = UIDevice.current.identifierForVendor?.uuidString ?? "Unknown-UUID"
         
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // 帶入 Bearer Token
@@ -81,6 +82,7 @@ class AuthService {
         
         // 2. 配置 Request
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.httpMethod = "DELETE" // 💡 修改為 DELETE
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -151,6 +153,7 @@ class AuthService {
         
         // 2. 配置 Request (GET 是預設，所以不特別寫也行，但建議寫清楚)
         var request = URLRequest(url: url)
+        request.timeoutInterval = 10
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         

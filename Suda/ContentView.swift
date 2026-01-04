@@ -9,18 +9,20 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @Query private var authRecords: [AuthData]
     @Environment(AppState.self) private var appState
     @Environment(\.modelContext) private var modelContext
-
+    
     var body: some View {
         Group {
             if appState.isLoggedIn {
-                // 這裡進入你剛才要求的打卡畫面
-                MainHomeView()
+                if let auth = authRecords.first {
+                    MainHomeView(auth: auth)
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
                         removal: .move(edge: .leading).combined(with: .opacity)
                     ))
+                }
             } else {
                 // 否則停留在登入頁
                 LoginView()
@@ -74,8 +76,4 @@ struct ContentView: View {
 //            }
 //        }
 //    }
-}
-
-#Preview {
-    ContentView()
 }

@@ -7,16 +7,13 @@
 import SwiftUI
 
 struct LoginView: View {
+    @Environment(\.colorScheme) var colorScheme
     @Environment(\.openURL) var openURL
     @Environment(\.modelContext) private var modelContext
     @Environment(AppState.self) private var appState
     @State private var viewModel = LoginViewModel()
     @State private var protocolSelection = "https://"
     let protocols = ["https://", "http://"]
-    
-    // 定義主色調
-    let primaryBlue = Color(red: 0.11, green: 0.53, blue: 0.94) // #1C87EF
-    let textFieldBg = Color(red: 0.92, green: 0.94, blue: 0.96) // 淺藍灰色背景
 
     var body: some View {
         //@Bindable var viewModel = viewModel
@@ -31,27 +28,34 @@ struct LoginView: View {
                     .scaledToFit()
             }
             
-            // 2. 標題
-            Text("速打 - 快速搞定打卡大小事")
-                .font(.headline)
-                .foregroundColor(Color(red: 0.2, green: 0.4, blue: 0.6))
-                .bold()
-                .padding(10)
-            
             // 3. 輸入框組
             VStack(spacing: 15) {
                 HStack(spacing: 0) {
+                    // 左側：協定選擇器 (http/https)
                     CustomProtocolPicker(selection: $protocolSelection)
-                        .frame(width: 120)
-
-                    CustomTextField(placeholder: "API連線伺服器", text: $viewModel.serverAddress)
-                        .textInputAutocapitalization(.never) // 關閉自動大寫 (iOS 15+)
-                        .disableAutocorrection(true) // 關閉自動校正
+                        .frame(width: 130) // 調整寬度使其更緊湊
+                        .fixedSize(horizontal: true, vertical: false)
+                        .background(Color.cardBgColor) // 稍微區隔選擇區域
+                    
+                    // 分隔線
+                    Divider()
+                        .frame(height: 24)
+                    
+                    // 右側：網址輸入
+                    CustomTextField(iconName: "link", placeholder: "連線網址", text: $viewModel.serverAddress)
+                        .textInputAutocapitalization(.never)
+                        .disableAutocorrection(true)
                         .keyboardType(.URL)
+                        .padding(.leading, 10)
                 }
+                // ✅ 這裡設定整體的樣式，讓它們看起來像一個框
+                //.frame(height: 50)
+                .background(Color.cardBgColor)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
 
-                CustomTextField(placeholder: "請輸入帳號", text: $viewModel.username)
-                CustomSecureField(placeholder: "請輸入密碼", text: $viewModel.password)
+
+                CustomTextField(iconName: "person.fill", placeholder: "請輸入帳號", text: $viewModel.username)
+                CustomSecureField(iconName: "lock.fill", placeholder: "請輸入密碼", text: $viewModel.password)
             }
             
             // 5. 登入按鈕
@@ -70,15 +74,25 @@ struct LoginView: View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 55)
-            .background(primaryBlue)
+            .background(Color.primaryBlue)
             .cornerRadius(25)
             
             Spacer()
             
             // 6. 底部資訊
             VStack(spacing: 8) {
-                Text("Suda - 速打打卡系統")
-                Text("幫您快速完成打卡大小事")
+                HStack {
+                    // 使用「+」號將不同樣式的 Text 串接起來
+                    Text("Su")
+                        .foregroundColor(Color.primaryBlue) // 水藍色（可改用 Color(red: 0.3, green: 0.7, blue: 1.0) 調整更淡的水藍）
+                    +
+                    Text("da")
+                        .foregroundColor(Color.textPrimary) // 灰色
+                    +
+                    Text(" 速打 - 快速打卡好輕鬆")
+                        .foregroundColor(Color.textPrimary) // 跟隨系統的文字顏色
+                }
+                .font(.headline) // 你可以統一設定字體大小
                 HStack(spacing: 10) {
                     Link("條款", destination: URL(string: "https://studio-44s.tw")!)
                     Text("·")
@@ -88,11 +102,10 @@ struct LoginView: View {
                 }
                 .font(.footnote)
             }
-            .foregroundColor(.secondary)
+            .foregroundColor(Color.textSecondary)
             .padding(.bottom, 20)
         }
         .padding(.horizontal, 30)
-        .background(Color(red: 0.97, green: 0.98, blue: 0.99).ignoresSafeArea())
         .alert("提示", isPresented: $viewModel.showAlert){
             Button("確定", role: .cancel) { }
         } message: {
@@ -117,32 +130,46 @@ struct LoginView: View {
         } message: {
             Text("請確認是否將此裝置作為您的打卡裝置。")
         }
+        .background(Color.bgColor)
     }
 }
 
 // MARK: - 子元件與樣式
 
 struct CustomTextField: View {
+    var iconName: String
     var placeholder: String
     @Binding var text: String
     
     var body: some View {
-        TextField(placeholder, text: $text)
-            .padding()
-            .background(Color(red: 0.92, green: 0.94, blue: 0.96))
-            .cornerRadius(15)
+        HStack {
+            Image(systemName: iconName)
+                .foregroundColor(.gray.opacity(0.6))
+                .frame(width: 20) // 固定寬度讓對齊更整齊
+            TextField("", text: $text, prompt: Text(placeholder).foregroundColor(Color.textSecondary))
+                .padding()
+                .background(Color.cardBgColor)
+                .cornerRadius(15)
+                .foregroundColor(Color.textSecondary)
+        }
     }
 }
 
 struct CustomSecureField: View {
+    var iconName: String
     var placeholder: String
     @Binding var text: String
     
     var body: some View {
-        SecureField(placeholder, text: $text)
-            .padding()
-            .background(Color(red: 0.92, green: 0.94, blue: 0.96))
-            .cornerRadius(15)
+        HStack {
+            Image(systemName: iconName)
+                .foregroundColor(.gray.opacity(0.6))
+                .frame(width: 20) // 固定寬度讓對齊更整齊
+            SecureField("", text: $text, prompt: Text(placeholder).foregroundColor(Color.textSecondary))
+                .padding()
+                .background(Color.cardBgColor)
+                .cornerRadius(15)
+        }
     }
 }
 
@@ -159,9 +186,9 @@ struct CustomProtocolPicker: View {
         .pickerStyle(.menu)
         .padding(.vertical, 10) // 調整與輸入框高度一致
         .padding(.horizontal, 10)
-        .background(Color(red: 0.92, green: 0.94, blue: 0.96))
+        .background(Color.cardBgColor)
         .cornerRadius(15)
-        .accentColor(.primary) // 讓箭頭顏色跟隨系統
+        .accentColor(Color.textSecondary) // 讓箭頭顏色跟隨系統
     }
 }
 
@@ -176,8 +203,4 @@ struct CheckboxToggleStyle: ToggleStyle {
                 .foregroundColor(configuration.isOn ? .blue : .gray.opacity(0.3))
         }
     }
-}
-
-#Preview{
-    LoginView()
 }

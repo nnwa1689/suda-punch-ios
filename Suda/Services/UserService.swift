@@ -16,6 +16,7 @@ struct UserService
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
+        request.timeoutInterval = 10
         
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         

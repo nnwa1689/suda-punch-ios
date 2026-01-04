@@ -19,7 +19,7 @@ struct PunchHistoryView: View {
     // 將選項定義為常數，避免在 Body 內重複計算
     var yearOptions: [String] {
         let currentYear = Calendar.current.component(.year, from: Date())
-        let startYear = 2024 // 你的 App 開始運行的年份
+        let startYear = 2025 // 你的 App 開始運行的年份
         // 生成 [ "2024", "2025", ... ]
         return (startYear...currentYear).map { String($0) }
     }
@@ -45,9 +45,10 @@ struct PunchHistoryView: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(Color.white)
+                    .background(Color.cardBgColor)
                     .cornerRadius(10)
-                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    .foregroundColor(Color.textPrimary)
                 }
                 .id("year-dropdown")
                 
@@ -67,9 +68,10 @@ struct PunchHistoryView: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(Color.white)
+                    .background(Color.cardBgColor)
                     .cornerRadius(10)
-                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    .foregroundColor(Color.textPrimary)
                 }
                 .id("month-dropdown")
             }
@@ -81,15 +83,15 @@ struct PunchHistoryView: View {
                     VStack(spacing: 20) {
                         Image(systemName: "calendar.badge.exclamationmark")
                             .font(.system(size: 60))
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.textSecondary)
                         
                         Text("本月無打卡紀錄")
                             .font(.headline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color.textSecondary)
                         
                         Text("\(viewModel.selectedYear)年 \(viewModel.selectedMonth)月")
                             .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.textSecondary)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -127,18 +129,18 @@ struct RecordCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(record.date).bold().font(.headline)
+                Text(record.date).bold().font(.headline).foregroundColor(Color.textPrimary)
                 Spacer()
-                Text(record.workingHours + "小時").foregroundColor(.gray)
+                Text(record.workingHours + "小時").foregroundColor(Color.primaryBlue)
             }
             
-            Text("上班打卡時間: \(record.checkInTime)").foregroundColor(.blue.opacity(0.8))
-            Text("下班打卡時間: \(record.checkOutTime)").foregroundColor(.blue.opacity(0.8))
+            Text("上班打卡時間: \(record.checkInTime)").foregroundColor(Color.textSecondary)
+            Text("下班打卡時間: \(record.checkOutTime)").foregroundColor(Color.textSecondary)
         }
         .padding()
-        .background(Color.white)
+        .background(Color.cardBgColor)
         .cornerRadius(15)
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2), lineWidth: 1))
-        //.shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        //.overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
 }

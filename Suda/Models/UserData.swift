@@ -13,4 +13,5 @@ struct UserData: Decodable {
     let username: String
     let isActive: Bool
     let isAdmin: Bool
+    let activeDeviceUuid: String
 }
