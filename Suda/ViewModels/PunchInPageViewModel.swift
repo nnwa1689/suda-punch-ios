@@ -216,7 +216,7 @@ class PunchInPageViewModel {
                 self.expectedPunchTimeOut = shift.endTime
             } else {
                 // 處理「近期無排班」的情況
-                self.scheduleName = "本日無排班"
+                self.scheduleName = response.message ?? "無排班"
                 self.expectedPunchTime = "--:--"
                 print("伺服器訊息：\(response.message)")
             }
