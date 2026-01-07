@@ -13,6 +13,7 @@ struct PunchInPageView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppState.self) private var appState
     @State private var viewModel: PunchInPageViewModel
+    @State private var showPicker = false // 控制彈窗顯示的狀態
     
     init(auth: AuthData) {
         // 初始化 State 包裝的 ViewModel
@@ -59,48 +60,19 @@ struct PunchInPageView: View {
                                 Text(viewModel.expectedPunchTimeOut).foregroundColor(Color.textSecondary)
                             }
                             
-                            // 地點選擇器
-                            Menu {
-                                
-                                // 檢查是否有地點資料，若無則顯示提示
-                                    if viewModel.punchPoints.isEmpty {
-                                        Button("讀取中...") { }
-                                            .disabled(true)
-                                    } else {
-                                        ForEach(viewModel.punchPoints) { point in
-                                            Button {
-                                                // 選中後更新選中的物件
-                                                viewModel.selectedPoint = point
-                                            } label: {
-                                                HStack {
-                                                    Text(point.name)
-                                                    if viewModel.selectedPoint?.id == point.id {
-                                                        Image(systemName: "checkmark")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                            } label: {
-                                HStack {
-                                        // 顯示目前選中的地點名稱，如果還沒選到則顯示預設文字
-                                    Image(systemName: "location.fill")
-                                    Text(viewModel.selectedPoint?.name ?? "請選擇打卡地點")
-                                        .fontWeight(.medium)
-                                    
-                                    Spacer()
-                                    
-                                    // 箭頭圖示
-                                    Image(systemName: "chevron.up.chevron.down")
-                                        .font(.caption)
-                                        .foregroundColor(Color.textSecondary)
-                                }
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(12)
-                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+                            PunchPointSelectionRow(
+                                selectedPointName: viewModel.selectedPoint?.name
+                            ) {
+                                showPicker = true
                             }
-                            .foregroundColor(Color.textPrimary)
+                            .padding(.horizontal)
+                            .sheet(isPresented: $showPicker) {
+                                PunchPointPickerView(
+                                    points: viewModel.punchPoints,
+                                    selectedPoint: $viewModel.selectedPoint
+                                )
+                                .presentationDetents([.medium, .large])
+                            }
                         }
                         
                         // --- 3. 上次打卡時間區 ---
@@ -180,5 +152,100 @@ struct PunchInPageView: View {
             }
         }
         .background(Color.bgColor.ignoresSafeArea())
+    }
+}
+
+struct PunchPointSelectionRow: View {
+    let selectedPointName: String?
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Image(systemName: "location.fill")
+                    .foregroundColor(.blue)
+                
+                // 簡化邏輯：將邏輯判斷結果直接帶入
+                Text(selectedPointName ?? "請選擇打卡地點")
+                    .fontWeight(.medium)
+                    .foregroundColor(selectedPointName == nil ? .gray : .black)
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(Color.textSecondary)
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(12)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct PunchPointPickerView: View {
+    let points: [PunchPoint]           // 只需要清單資料
+    @Binding var selectedPoint: PunchPoint? // 用來回傳選擇結果
+    @Environment(\.dismiss) var dismiss
+    @State private var searchText = ""
+
+    // 搜尋邏輯改用 points
+    var filteredPoints: [PunchPoint] {
+        if searchText.isEmpty { return points }
+        return points.filter { point in
+            // 無視大小寫
+            point.name.localizedCaseInsensitiveContains(searchText) ||
+            point.id.localizedCaseInsensitiveContains(searchText) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                // 1. 強制指定 id 並確保 filteredPoints 是 [PunchPoint]
+                ForEach(filteredPoints, id: \.id) { (point: PunchPoint) in
+                    Button(action: {
+                        selectedPoint = point
+                        dismiss()
+                    }) {
+                        // 2. 這裡一定要用一個容器 (如 HStack 或 VStack) 包起來
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(point.name)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                                Text("代號：\(point.id)")
+                                    .font(.caption)
+                                    .foregroundColor(Color.textSecondary)
+                            }
+                            Spacer()
+                            
+                            // 3. 顯示目前勾選狀態 (選選優化)
+                            if selectedPoint?.id == point.id {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.primary)
+                            }
+                        }
+                        .contentShape(Rectangle()) // 讓整列都可點擊
+                    }
+                }
+                if filteredPoints.isEmpty && !searchText.isEmpty {
+                    ContentUnavailableView {
+                        Label("找不到打卡點", systemImage: "mappin.slash.circle")
+                    } description: {
+                        Text("找不到任何可用的打卡點\n請確認網路連線或搜尋條件")
+                    }
+                }
+            }
+            .navigationTitle("選擇打卡點")
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, prompt: "搜尋打卡點名稱或代號")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("關閉") { dismiss() }
+                }
+            }
+        }
     }
 }

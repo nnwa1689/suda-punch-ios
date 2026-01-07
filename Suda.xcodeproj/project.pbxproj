@@ -29,7 +29,7 @@
 
 /* Begin PBXFileReference section */
 		E8083D042F06C7B60028A5BC /* SudaPunch.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = SudaPunch.icon; sourceTree = "<group>"; };
-		E8771A9A2EFD81B600E1B456 /* Suda 速打.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Suda 速打.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8771A9A2EFD81B600E1B456 /* 速打Suda.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "速打Suda.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8771AA92EFD81B700E1B456 /* SudaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SudaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8771AB32EFD81B700E1B456 /* SudaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SudaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -91,7 +91,7 @@
 		E8771A9B2EFD81B600E1B456 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E8771A9A2EFD81B600E1B456 /* Suda 速打.app */,
+				E8771A9A2EFD81B600E1B456 /* 速打Suda.app */,
 				E8771AA92EFD81B700E1B456 /* SudaTests.xctest */,
 				E8771AB32EFD81B700E1B456 /* SudaUITests.xctest */,
 			);
@@ -120,7 +120,7 @@
 			packageProductDependencies = (
 			);
 			productName = suda;
-			productReference = E8771A9A2EFD81B600E1B456 /* Suda 速打.app */;
+			productReference = E8771A9A2EFD81B600E1B456 /* 速打Suda.app */;
 			productType = "com.apple.product-type.application";
 		};
 		E8771AA82EFD81B700E1B456 /* SudaTests */ = {
@@ -193,7 +193,7 @@
 				};
 			};
 			buildConfigurationList = E8771A952EFD81B500E1B456 /* Build configuration list for PBXProject "Suda" */;
-			developmentRegion = en;
+			developmentRegion = "zh-Hant";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -406,23 +406,26 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = SudaPunch;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = A94L3VY3Q9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSLocationUsageDescription = "我們需要您的位置資訊以確保打卡準確性。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hazuya.studio.suda;
-				PRODUCT_NAME = "$(TARGET_NAME) 速打";
+				PRODUCT_NAME = "速打$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -439,23 +442,26 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = SudaPunch;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = A94L3VY3Q9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSLocationUsageDescription = "我們需要您的位置資訊以確保打卡準確性。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hazuya.studio.suda;
-				PRODUCT_NAME = "$(TARGET_NAME) 速打";
+				PRODUCT_NAME = "速打$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -473,6 +479,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationUsageDescription = "我們需要您的位置資訊以確保打卡準確性。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hazuya.studio.sudaTests;
@@ -494,6 +502,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationUsageDescription = "我們需要您的位置資訊以確保打卡準確性。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hazuya.studio.sudaTests;
@@ -514,6 +524,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationUsageDescription = "我們需要您的位置資訊以確保打卡準確性。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hazuya.studio.sudaUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -533,6 +545,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationUsageDescription = "我們需要您的位置資訊以確保打卡準確性。";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hazuya.studio.sudaUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

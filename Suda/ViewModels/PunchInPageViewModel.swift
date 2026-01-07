@@ -92,11 +92,18 @@ class PunchInPageViewModel {
     // 每秒在本機更新，避免頻繁請求 API
     private func startLocalTimer() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            Task {
+        // 1. 先建立 timer，但不直接排程 (不要用 scheduledTimer)
+        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
+            Task { @MainActor in // 確保在主執行緒更新 UI
                 self?.tick()
             }
         }
+        
+        // 2. 將 timer 加入到 .common 模式的 RunLoop 中
+        RunLoop.main.add(newTimer, forMode: .common)
+        
+        // 3. 儲存 timer 實例以便後續停止
+        self.timer = newTimer
     }
     
     private func tick() {
