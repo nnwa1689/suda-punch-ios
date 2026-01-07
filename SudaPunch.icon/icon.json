@@ -4,8 +4,19 @@
     {
       "layers" : [
         {
-          "image-name" : "SudaIcon.png",
-          "name" : "SudaIcon"
+          "blend-mode" : "normal",
+          "fill" : "automatic",
+          "glass" : false,
+          "hidden" : false,
+          "image-name" : "SudaIcon1.png",
+          "name" : "SudaIcon1",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
         }
       ],
       "shadow" : {
