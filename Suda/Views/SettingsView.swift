@@ -30,6 +30,10 @@ struct SettingsView: View {
                                 .font(.system(size: 28, weight: .bold))
                                 .foregroundColor(Color.textPrimary)
                             
+                            Text("\(viewModel.deptId) - \(viewModel.deptName)")
+                                .font(.system(size: 16))
+                                .foregroundColor(Color.textSecondary)
+                            
                             Text("到職日期: \(viewModel.hireDate)")
                                 .font(.system(size: 16))
                                 .foregroundColor(Color.textSecondary)
@@ -46,6 +50,8 @@ struct SettingsView: View {
                             
                             VStack(spacing: 0) {
                                 infoRow(title: "帳號", value: viewModel.employeeId)
+                                Divider().padding(.horizontal)
+                                infoRow(title: "API 連線公司名稱", value: viewModel.companyName)
                                 Divider().padding(.horizontal)
                                 //infoRow(title: "帳號登入類型", value: loginType)
                                 //Divider().padding(.horizontal)

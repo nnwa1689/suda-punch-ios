@@ -7,22 +7,26 @@ import SwiftData
 class SettingsViewModel {
     private let employeeService = EmployeeService()
     private let authService = AuthService()
+    private let baseService = BaseService()
     
     var employee: EmployeeData?
     var isLoading = false
     var errorMessage: String?
     var showAlert = false
     
-    var hireDate = ""
     //var accountID: String
     //var loginType = "LocalDB / OAuthAPI"
     var appVersion = ""
-    var employeeName = ""
-    
     var serverUrl: String = ""
     var userToken: String = ""
+    var companyName: String = ""
+    
+    var hireDate = ""
+    var employeeName = ""
     var employeeId: String = ""
     var deviceUuid: String = ""
+    var deptId: String = ""
+    var deptName: String = ""
     
     var isUnbinding = false
     var unbindMessage: String = ""
@@ -38,6 +42,7 @@ class SettingsViewModel {
         Task {
             await fetchEmployeeInfo()
             await checkApiVersion()
+            await fetchSystemBaseInfo()
         }
     }
 
@@ -71,6 +76,8 @@ class SettingsViewModel {
             
             if let emp = reps.data {
                 self.employeeName = emp.name
+                self.deptId = emp.department?.departmentId ?? ""
+                self.deptName = emp.department?.name ?? ""
                 if let date = isoFormatter.date(from: emp.arrival ?? ""){
                     self.hireDate = dateFormatter.string(from: date)
                 }
@@ -116,13 +123,29 @@ class SettingsViewModel {
         }
     }
     
-    func checkApiVersion() {
+    func checkApiVersion() async {
         Task {
             do {
                 let version = try await authService.fetchApiInfo(baseURL: self.serverUrl)
                 await MainActor.run {
                     self.apiVersion = version
                     print("成功連線 API，版本：\(version)")
+                }
+            } catch {
+                print("API 請求失敗：\(error)")
+            }
+        }
+    }
+    
+    func fetchSystemBaseInfo() async {
+        Task {
+            do {
+                let companyName = try await baseService.getSystemBaseInfo(
+                    serverUrl: self.serverUrl,
+                    token: self.userToken,
+                    baseId: "company_name")
+                await MainActor.run {
+                    self.companyName = companyName.data?.base_value ?? ""
                 }
             } catch {
                 print("API 請求失敗：\(error)")

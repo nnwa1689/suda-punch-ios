@@ -22,7 +22,7 @@ struct EmployeeService {
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw NetworkError.requestFailed("無法取得打卡點")
+            throw NetworkError.requestFailed("無法取得員工")
         }
         
         return try JSONDecoder().decode(BaseResponse<EmployeeData>.self, from: data)
