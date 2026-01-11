@@ -29,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		E8083D042F06C7B60028A5BC /* SudaPunch.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = SudaPunch.icon; sourceTree = "<group>"; };
+		E835C2312F13F4D1007AD9C7 /* suda.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = suda.entitlements; sourceTree = "<group>"; };
 		E8771A9A2EFD81B600E1B456 /* 速打Suda.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "速打Suda.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8771AA92EFD81B700E1B456 /* SudaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SudaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8771AB32EFD81B700E1B456 /* SudaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SudaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +86,7 @@
 				E8771AB62EFD81B700E1B456 /* SudaUITests */,
 				E8771A9B2EFD81B600E1B456 /* Products */,
 				E8083D042F06C7B60028A5BC /* SudaPunch.icon */,
+				E835C2312F13F4D1007AD9C7 /* suda.entitlements */,
 			);
 			sourceTree = "<group>";
 		};
@@ -310,6 +312,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = /Users/hazuya/Documents/Projects/suda/suda.entitlements;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -375,6 +378,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = /Users/hazuya/Documents/Projects/suda/suda.entitlements;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -411,6 +415,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				INFOPLIST_KEY_NSLocationUsageDescription = "我們需要您的位置資訊以確保打卡準確性。";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -447,6 +452,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				INFOPLIST_KEY_NSLocationUsageDescription = "我們需要您的位置資訊以確保打卡準確性。";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "我們需要您的位置資訊以驗證打卡地點是否在授權範圍內。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

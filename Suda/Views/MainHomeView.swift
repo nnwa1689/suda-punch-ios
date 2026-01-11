@@ -35,6 +35,7 @@ struct MainHomeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
+                //WiFiTestView()
                 TabView(selection: $selectedTab) {
                     PunchInPageView(auth: viewModel.auth)
                         .tabItem {

@@ -1,4 +1,4 @@
-import CoreLocation
+internal import CoreLocation
 
 @Observable
 class LocationManager: NSObject, CLLocationManagerDelegate {

@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 import SwiftData
-import CoreLocation
+internal import CoreLocation
 
 @Observable
 @MainActor
