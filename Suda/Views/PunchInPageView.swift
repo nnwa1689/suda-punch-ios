@@ -115,6 +115,7 @@ struct PunchInPageView: View {
                             )
                     }
                 }
+                .onDisappear { viewModel.stopBluetoothScan() }
                 .padding(.horizontal, 25)
                 .padding(.bottom, 30) // 留一點空間給 TabBar
             }
@@ -126,7 +127,21 @@ struct PunchInPageView: View {
                 Text(viewModel.alertMessage) // 顯示 ViewModel 傳過來的訊息
             }
             .overlay {
-                if viewModel.isPunching {
+                if viewModel.isPunchingBluetooth {
+                    ZStack {
+                        Color.black.opacity(0.3)
+                            .ignoresSafeArea()
+                        VStack(spacing: 15) {
+                            ProgressView()
+                                .scaleEffect(1.5)
+                            Text("正在驗證實體打卡裝置...")
+                                .foregroundColor(.white)
+                        }
+                        .padding(30)
+                        .background(.secondary)
+                        .cornerRadius(15)
+                    }
+                } else if viewModel.isPunching {
                     ZStack {
                         Color.black.opacity(0.3)
                             .ignoresSafeArea()

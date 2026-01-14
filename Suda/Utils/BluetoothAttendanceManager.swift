@@ -22,14 +22,17 @@ class BluetoothAttendanceManager: NSObject {
     }
 
     func startScan() {
-        guard bluetoothStatus == .poweredOn else { return }
         isScanning = true
-        // 開始掃描所有裝置 (可以傳入特定 Service UUID)
-        centralManager?.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
+        if centralManager?.state == .poweredOn {
+            actualStartScan()
+        } else {
+            print("⏳ 藍牙尚未就緒 (狀態 \(centralManager?.state.rawValue ?? -1))，等待自動啟動...")
+        }
     }
 
     func stopScan() {
         centralManager?.stopScan()
+        peripheralExtraInfo.removeAll()
         isScanning = false
     }
 }
@@ -37,9 +40,29 @@ class BluetoothAttendanceManager: NSObject {
 extension BluetoothAttendanceManager: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         self.bluetoothStatus = central.state
-        if central.state == .poweredOn {
-            print("藍牙已就緒")
+            
+        switch central.state {
+        case .poweredOn:
+            print("✅ 藍牙狀態已轉為 PoweredOn")
+            // 💡 關鍵：如果之前 UI 呼叫了啟動但因為狀態不對失敗了，在這裡自動補啟動
+            if isScanning {
+                actualStartScan()
+            }
+        case .poweredOff:
+            print("❌ 藍牙已關閉")
+        case .unauthorized:
+            print("🚫 藍牙未授權")
+        default:
+            print("⏳ 藍牙狀態更新中: \(central.state.rawValue)")
         }
+    }
+    
+    private func actualStartScan() {
+        print("📡 執行底層掃描指令...")
+        centralManager?.scanForPeripherals(
+            withServices: nil,
+            options: [CBCentralManagerScanOptionAllowDuplicatesKey: true]
+        )
     }
 
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
@@ -52,7 +75,7 @@ extension BluetoothAttendanceManager: CBCentralManagerDelegate {
         
         // 抓取 UUIDs
         let serviceUUIDs = (advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID])?.map { $0.uuidString } ?? []
-        
+        print("🔍 發現裝置：\(peripheral.name ?? "未知") | UUIDs: \(serviceUUIDs)")
         DispatchQueue.main.async {
             // 更新字典 (這裡我們把名稱也存進去，確保 View 讀得到最新的)
             self.peripheralExtraInfo[peripheral.identifier] = (rssi: RSSI.intValue, serviceUUIDs: serviceUUIDs)

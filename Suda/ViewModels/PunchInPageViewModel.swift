@@ -1,4 +1,5 @@
 import Foundation
+import CoreBluetooth
 import Observation
 import SwiftData
 internal import CoreLocation
@@ -9,6 +10,7 @@ class PunchInPageViewModel {
     private let punchService = PunchService()
     private let scheduleService = ScheduleService()
     private let userService = UserService()
+    var bluetoothManager = BluetoothAttendanceManager()
     
     var locationManager: LocationManager? // 用於獲取經緯度
     
@@ -45,8 +47,15 @@ class PunchInPageViewModel {
     var lastPunchRemark: String? = nil
     
     var isPunching: Bool = false      // 控制按鈕是否正在轉圈圈/禁用
+    var isPunchingBluetooth: Bool = false
     var showAlert: Bool = false       // 控制 .alert 彈窗是否顯示
     var alertMessage: String = ""     // 存儲 API 回傳的成功或錯誤訊息
+    
+    // --- 藍牙相關屬性 ---
+    // 儲存掃描到的即時資訊 [ID: (RSSI, [ServiceUUIDs])]
+    var bluetoothExtraInfo: [UUID: (rssi: Int, serviceUUIDs: [String])] = [:]
+    // 目前掃描到的裝置列表
+    var discoveredPeripherals: [CBPeripheral] = []
     
     
     // 儲存從伺服器拿到的 Date 物件
@@ -126,13 +135,47 @@ class PunchInPageViewModel {
     
     // 4. 核心功能方法
     func performPunch(type: String) async {
+        defer {
+            // 不論結果如何，結束時都要清空，確保下次打卡是全新的偵測
+            bluetoothManager.stopScan()
+            self.isPunching = false
+        }
         // 1. 檢查地點
-        guard let pointId = selectedPoint?.id else {
+        guard let point = selectedPoint else {
             self.alertMessage = "請先選擇打卡地點"
             self.showAlert = true
             return
         }
         
+        // BlueTooth 打卡驗證
+        if point.verifyType == "Bluetooth" {
+            bluetoothManager.startScan()
+            self.isPunchingBluetooth = true
+            // 2. 藍牙硬體檢查
+            guard bluetoothManager.bluetoothStatus == .poweredOn else {
+                self.alertMessage = "請開啟藍牙以進行位置驗證"
+                self.showAlert = true
+                self.isPunchingBluetooth = false
+                return
+            }
+            
+            if let targetUuid = point.bluetoothServiceUuid, !targetUuid.isEmpty {
+                // 給予 2 秒的時間確保掃描到最新的 RSSI（避免剛打開 App 還沒掃到）
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                
+                if !isSelectedPointInRange {
+                    self.alertMessage = "未偵測到打卡基站，請靠近「\(point.name)」"
+                    self.isPunching = false
+                    self.isPunchingBluetooth = false
+                    self.showAlert = true
+                    return
+                }
+            }
+            self.isPunchingBluetooth = false
+        } else {
+            // Wifi 打卡預留
+        }
+
         // 2. 檢查定位組件
         if locationManager == nil {
             locationManager = LocationManager()
@@ -147,10 +190,8 @@ class PunchInPageViewModel {
         // 3. 開始定位流程
         self.isPunching = true
         lm.requestLocation()
-        
         print("DEBUG: 正在等待座標...") // 👈 加這行
-        
-        // 等待定位 (1秒間隔)
+        // 等待定位
         try? await Task.sleep(nanoseconds: 1_000_000_000)
         
         // 4. 取得座標後發送請求
@@ -162,7 +203,7 @@ class PunchInPageViewModel {
                     longitude: coords.longitude,
                     deviceUuid: self.deviceUuid,
                     type: type,
-                    punchPointsId: pointId
+                    punchPointsId: point.id
                 )
                 
                 let response = try await punchService.postPunch(
@@ -191,6 +232,33 @@ class PunchInPageViewModel {
     // 輔助方法
     func performPunchIn() { Task { await performPunch(type: "CHECK_IN") } }
     func performPunchOut() { Task { await performPunch(type: "CHECK_OUT") } }
+    
+    // --- 藍牙掃描控制 ---
+    func startBluetoothScan() {
+            bluetoothManager.startScan()
+        }
+
+    func stopBluetoothScan() {
+        bluetoothManager.stopScan()
+    }
+    
+    // --- 驗證邏輯：判斷目前選中的地點是否在旁邊 ---
+    var isSelectedPointInRange: Bool {
+        guard let targetPoint = selectedPoint,
+              let targetUUIDString = targetPoint.bluetoothServiceUuid else {
+            return false
+        }
+        
+        // 將字串轉為 CBUUID 物件，這會自動處理大小寫與連字號問題
+        let targetCBUUID = CBUUID(string: targetUUIDString)
+        
+        return bluetoothManager.peripheralExtraInfo.values.contains { info in
+            // 將掃描到的字串陣列轉回 CBUUID 進行物件比對
+            info.serviceUUIDs.contains { scannedUUIDString in
+                CBUUID(string: scannedUUIDString) == targetCBUUID
+            }
+        }
+    }
 
     func fetchPunchPoints() async {
         do {
