@@ -59,20 +59,6 @@ struct PunchInPageView: View {
                                 Spacer()
                                 Text(viewModel.expectedPunchTimeOut).foregroundColor(Color.textSecondary)
                             }
-                            
-                            PunchPointSelectionRow(
-                                selectedPointName: viewModel.selectedPoint?.name
-                            ) {
-                                showPicker = true
-                            }
-                            .padding(.horizontal)
-                            .sheet(isPresented: $showPicker) {
-                                PunchPointPickerView(
-                                    points: viewModel.punchPoints,
-                                    selectedPoint: $viewModel.selectedPoint
-                                )
-                                .presentationDetents([.medium, .large])
-                            }
                         }
                         
                         // --- 3. 上次打卡時間區 ---
@@ -96,7 +82,21 @@ struct PunchInPageView: View {
                 }
                 
                 // --- 4. 打卡按鈕 ---
-                VStack(spacing: 15) {
+                VStack(spacing: 10) {
+                    PunchPointSelectionRow(
+                        selectedPointName: viewModel.selectedPoint?.name,
+                        selectedPointType: viewModel.selectedPoint?.verifyType
+                    ) {
+                        showPicker = true
+                    }
+                    .sheet(isPresented: $showPicker) {
+                        PunchPointPickerView(
+                            points: viewModel.punchPoints,
+                            selectedPoint: $viewModel.selectedPoint
+                        )
+                        .presentationDetents([.medium, .large])
+                    }
+                    
                     Button(action: { viewModel.performPunchIn() }) {
                         Text("上班打卡")
                             .font(.headline).bold()
@@ -172,12 +172,13 @@ struct PunchInPageView: View {
 
 struct PunchPointSelectionRow: View {
     let selectedPointName: String?
+    let selectedPointType: String?
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack {
-                Image(systemName: "location.fill")
+                Image(systemName: selectedPointType == "GPS" ? "location.fill" : "antenna.radiowaves.left.and.right")
                     .foregroundColor(.blue)
                 
                 // 簡化邏輯：將邏輯判斷結果直接帶入
@@ -227,9 +228,13 @@ struct PunchPointPickerView: View {
                         // 2. 這裡一定要用一個容器 (如 HStack 或 VStack) 包起來
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(point.name)
-                                    .font(.body)
-                                    .foregroundColor(.primary)
+                                HStack(spacing: 5) {
+                                    Image(systemName: point.verifyType == "GPS" ? "location.fill" : "antenna.radiowaves.left.and.right")
+                                        .foregroundColor(.blue)
+                                    Text(point.name)
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+                                }
                                 Text("代號：\(point.id)")
                                     .font(.caption)
                                     .foregroundColor(Color.textSecondary)
