@@ -38,66 +38,85 @@ struct SettingsView: View {
                                 .font(.system(size: 16))
                                 .foregroundColor(Color.textSecondary)
                         }
-                        .padding(.top, 40)
+                        .padding(.top, .AppSpacing.large)
                         
                         // --- 帳號資訊卡片 ---
                         VStack(alignment: .leading, spacing: 0) {
                             Text("帳號資訊")
                                 .font(.headline)
-                                .padding(.leading, 4)
-                                .padding(.bottom, 8)
-                                .foregroundColor(Color.textPrimary)
+                                .padding(.leading, .AppSpacing.tiny)
+                                .padding(.bottom, .AppSpacing.small)
+                                .foregroundColor(Color.textSecondary)
                             
                             VStack(spacing: 0) {
                                 infoRow(title: "帳號", value: viewModel.employeeId)
                                 Divider().padding(.horizontal)
-                                infoRow(title: "API 連線公司名稱", value: viewModel.companyName)
+                                infoRow(title: "公司名稱", value: viewModel.companyName)
                                 Divider().padding(.horizontal)
                                 //infoRow(title: "帳號登入類型", value: loginType)
                                 //Divider().padding(.horizontal)
                                 infoRow(title: "綁定打卡手機 UUID", value: viewModel.deviceUuid)
                             }
                             .background(Color.cardBgColor) // 使用你定義的卡片色
-                            .cornerRadius(15)
-                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                            .cornerRadius(.AppCorner.large)
+                            
+                            Text("版本資訊")
+                                .font(.headline)
+                                .padding(.leading, .AppSpacing.tiny)
+                                .padding(.top, .AppSpacing.large)
+                                .padding(.bottom, .AppSpacing.small)
+                                .foregroundColor(Color.textSecondary)
+                            
+                            VStack(spacing: 0) {
+                                infoRow(title: "APP 版本", value: Bundle.main.fullVersionString)
+                                Divider().padding(.horizontal)
+                                infoRow(title: "API 連線位置", value: viewModel.serverUrl)
+                                Divider().padding(.horizontal)
+                                infoRow(title: "API 版本", value: viewModel.apiVersion)
+                            }
+                            .background(Color.cardBgColor) // 使用你定義的卡片色
+                            .cornerRadius(.AppCorner.large)
                         }
                         .padding(.horizontal)
                         
+                        // --- 登出按鈕 ---
+                        Button(action: {
+                            showUnbindAlert = true
+                        }) {
+                            HStack {
+                                if viewModel.isUnbinding {
+                                    ProgressView().tint(.white)
+                                    Text("處理中...")
+                                } else {
+                                    Text("登出並解除裝置綁定")
+                                }
+                            }
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 55)
+                            .background(Color.red.opacity(0.85))
+                            .cornerRadius(.AppCorner.button)
+                        }
+                        .padding(.horizontal, .AppSpacing.medium)
+                        .padding(.top, .AppSpacing.medium)
+                        .padding(.bottom, .AppSpacing.medium)
+                        .disabled(viewModel.isUnbinding)
+                        
                         // --- 底部版本資訊 ---
-                        VStack(spacing: 4) {
-                            Text("APP版本 :\(Bundle.main.fullVersionString)")
-                            Text("API連線位置: \(viewModel.serverUrl)")
-                            Text("API版本: \(viewModel.apiVersion)")
+                        HStack(spacing: .AppSpacing.small) {
+                            Link("條款", destination: URL(string: "https://studio-44s.tw")!)
+                            Text("·")
+                            Link("官方網站", destination: URL(string: "https://studio-44s.tw/")!)
+                            Text("·")
+                            Link("幫助", destination: URL(string: "https://studio-44s.tw/")!)
                         }
                         .font(.caption)
                         .foregroundColor(Color.textSecondary)
                         .multilineTextAlignment(.center)
-                        .padding(.top, 20)
+                        .padding(.bottom, .AppSpacing.large)
                     }
                 }
-                
-                // --- 登出按鈕 ---
-                Button(action: {
-                    showUnbindAlert = true
-                }) {
-                    HStack {
-                        if viewModel.isUnbinding {
-                            ProgressView().tint(.white)
-                            Text("處理中...")
-                        } else {
-                            Text("登出並解除裝置綁定")
-                        }
-                    }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 55)
-                    .background(Color.red.opacity(0.85))
-                    .cornerRadius(28)
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 20)
-                .disabled(viewModel.isUnbinding)
             }
         }
         .alert("解除裝置綁定", isPresented: $showUnbindAlert) {
@@ -147,8 +166,8 @@ struct SettingsView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
+        .padding(.horizontal, .AppSpacing.large)
+        .padding(.vertical, .AppSpacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

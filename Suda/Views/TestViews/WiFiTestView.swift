@@ -38,7 +38,7 @@ struct WiFiTestView: View {
                     LabeledContent("精確度", value: "\(Int(location.horizontalAccuracy)) 公尺")
                 } else {
                     HStack {
-                        ProgressView().padding(.trailing, 5)
+                        ProgressView().padding(.trailing, .AppSpacing.small)
                         Text("正在等待座標更新...")
                             .foregroundColor(.gray)
                     }

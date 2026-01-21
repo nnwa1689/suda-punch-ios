@@ -46,12 +46,12 @@ struct LoginView: View {
                         .textInputAutocapitalization(.never)
                         .disableAutocorrection(true)
                         .keyboardType(.URL)
-                        .padding(.leading, 10)
+                        .padding(.leading, .AppSpacing.small)
                 }
                 // ✅ 這裡設定整體的樣式，讓它們看起來像一個框
                 //.frame(height: 50)
                 .background(Color.cardBgColor)
-                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .clipShape(RoundedRectangle(cornerRadius: .AppCorner.large))
 
 
                 CustomTextField(iconName: "person.fill", placeholder: "請輸入帳號", text: $viewModel.username)
@@ -75,7 +75,7 @@ struct LoginView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 55)
             .background(Color.primaryBlue)
-            .cornerRadius(25)
+            .cornerRadius(.AppCorner.button)
             
             Spacer()
             
@@ -83,7 +83,7 @@ struct LoginView: View {
             VStack(spacing: 8) {
                 HStack {
                     // 使用「+」號將不同樣式的 Text 串接起來
-                    Text("Su")
+                    Text("su")
                         .foregroundColor(Color.primaryBlue) // 水藍色（可改用 Color(red: 0.3, green: 0.7, blue: 1.0) 調整更淡的水藍）
                     +
                     Text("da")
@@ -103,9 +103,9 @@ struct LoginView: View {
                 .font(.footnote)
             }
             .foregroundColor(Color.textSecondary)
-            .padding(.bottom, 20)
+            .padding(.bottom, .AppSpacing.large)
         }
-        .padding(.horizontal, 30)
+        .padding(.horizontal, .AppSpacing.large)
         .alert("提示", isPresented: $viewModel.showAlert){
             Button("確定", role: .cancel) { }
         } message: {
@@ -149,7 +149,7 @@ struct CustomTextField: View {
             TextField("", text: $text, prompt: Text(placeholder).foregroundColor(Color.textSecondary))
                 .padding()
                 .background(Color.cardBgColor)
-                .cornerRadius(15)
+                .cornerRadius(.AppCorner.button)
                 .foregroundColor(Color.textSecondary)
         }
     }
@@ -168,7 +168,7 @@ struct CustomSecureField: View {
             SecureField("", text: $text, prompt: Text(placeholder).foregroundColor(Color.textSecondary))
                 .padding()
                 .background(Color.cardBgColor)
-                .cornerRadius(15)
+                .cornerRadius(.AppCorner.button)
         }
     }
 }
@@ -184,10 +184,10 @@ struct CustomProtocolPicker: View {
             }
         }
         .pickerStyle(.menu)
-        .padding(.vertical, 10) // 調整與輸入框高度一致
-        .padding(.horizontal, 10)
+        .padding(.vertical, .AppSpacing.small) // 調整與輸入框高度一致
+        .padding(.horizontal, .AppSpacing.small)
         .background(Color.cardBgColor)
-        .cornerRadius(15)
+        .cornerRadius(.AppCorner.button)
         .accentColor(Color.textSecondary) // 讓箭頭顏色跟隨系統
     }
 }

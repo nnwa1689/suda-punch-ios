@@ -34,7 +34,7 @@ struct PunchInPageView: View {
                                 .font(.headline)
                                 .foregroundColor(Color.textSecondary)
                         }
-                        .padding(.top, 40)
+                        .padding(.top, .AppSpacing.large)
                         
                         // --- 2. 今日工作時間區 ---
                         VStack(alignment: .leading, spacing: 15) {
@@ -78,7 +78,7 @@ struct PunchInPageView: View {
                             }
                         }
                     }
-                    .padding(25)
+                    .padding(.AppSpacing.large)
                 }
                 
                 // --- 4. 打卡按鈕 ---
@@ -101,23 +101,19 @@ struct PunchInPageView: View {
                         Text("上班打卡")
                             .font(.headline).bold()
                             .frame(maxWidth: .infinity).frame(height: 55)
-                            .background(Color.primaryBlue).foregroundColor(.white).cornerRadius(15)
+                            .background(Color.primaryBlue).foregroundColor(.white).cornerRadius(.AppCorner.button)
                     }
                     
                     Button(action: { viewModel.performPunchOut() }) {
                         Text("下班打卡")
                             .font(.headline).bold()
                             .frame(maxWidth: .infinity).frame(height: 55)
-                            .background(Color.cardBgColor).foregroundColor(.black).cornerRadius(15)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 15)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1) // 淺灰色、寬度為 1 的外框
-                            )
+                            .background(Color.btnSecondary).foregroundColor(.black).cornerRadius(.AppCorner.button)
                     }
                 }
                 .onDisappear { viewModel.stopBluetoothScan() }
-                .padding(.horizontal, 25)
-                .padding(.bottom, 30) // 留一點空間給 TabBar
+                .padding(.horizontal, .AppSpacing.large)
+                .padding(.bottom, .AppSpacing.large) // 留一點空間給 TabBar
             }
             .alert("系統提示", isPresented: $viewModel.showAlert) {
                 Button("確定", role: .cancel) {
@@ -137,9 +133,9 @@ struct PunchInPageView: View {
                             Text("正在驗證實體打卡裝置...")
                                 .foregroundColor(.white)
                         }
-                        .padding(30)
+                        .padding(.AppSpacing.large)
                         .background(.secondary)
-                        .cornerRadius(15)
+                        .cornerRadius(.AppCorner.large)
                     }
                 } else if viewModel.isPunching {
                     ZStack {
@@ -151,9 +147,9 @@ struct PunchInPageView: View {
                             Text("正在驗證位置...")
                                 .foregroundColor(.white)
                         }
-                        .padding(30)
+                        .padding(.AppSpacing.large)
                         .background(.secondary)
-                        .cornerRadius(15)
+                        .cornerRadius(.AppCorner.large)
                     }
                 }
             }
@@ -179,7 +175,7 @@ struct PunchPointSelectionRow: View {
         Button(action: action) {
             HStack {
                 Image(systemName: selectedPointType == "GPS" ? "location.fill" : "antenna.radiowaves.left.and.right")
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color.primaryBlue)
                 
                 // 簡化邏輯：將邏輯判斷結果直接帶入
                 Text(selectedPointName ?? "請選擇打卡地點")
@@ -194,8 +190,7 @@ struct PunchPointSelectionRow: View {
             }
             .padding()
             .background(Color.white)
-            .cornerRadius(12)
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+            .cornerRadius(.AppCorner.large)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -230,10 +225,10 @@ struct PunchPointPickerView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(spacing: 5) {
                                     Image(systemName: point.verifyType == "GPS" ? "location.fill" : "antenna.radiowaves.left.and.right")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(Color.primaryBlue)
                                     Text(point.name)
                                         .font(.body)
-                                        .foregroundColor(.primary)
+                                        .foregroundColor(Color.textPrimary)
                                 }
                                 Text("代號：\(point.id)")
                                     .font(.caption)

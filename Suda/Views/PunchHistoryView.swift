@@ -28,7 +28,7 @@ struct PunchHistoryView: View {
     var body: some View {
         VStack {
             // 1. 頂部篩選器 (年度/月份)
-            HStack(spacing: 15) {
+            HStack(spacing: .AppSpacing.medium) {
                 Menu {
                     ForEach(yearOptions, id: \.self) { option in
                         Button(option) {
@@ -43,11 +43,11 @@ struct PunchHistoryView: View {
                         Spacer()
                         Image(systemName: "chevron.down").font(.caption)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, .AppSpacing.medium)
+                    .padding(.vertical, .AppSpacing.small)
                     .background(Color.cardBgColor)
-                    .cornerRadius(10)
-                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    .cornerRadius(.AppCorner.large)
+                    //.shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                     .foregroundColor(Color.textPrimary)
                 }
                 .id("year-dropdown")
@@ -66,11 +66,11 @@ struct PunchHistoryView: View {
                         Spacer()
                         Image(systemName: "chevron.down").font(.caption)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, .AppSpacing.medium)
+                    .padding(.vertical, .AppSpacing.small)
                     .background(Color.cardBgColor)
-                    .cornerRadius(10)
-                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    .cornerRadius(.AppCorner.large)
+                    //.shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                     .foregroundColor(Color.textPrimary)
                 }
                 .id("month-dropdown")
@@ -80,7 +80,7 @@ struct PunchHistoryView: View {
             // 2. 紀錄列表
             ZStack {
                 if viewModel.dailyRecords.isEmpty && !viewModel.isLoading {
-                    VStack(spacing: 20) {
+                    VStack(spacing: .AppSpacing.medium) {
                         Image(systemName: "calendar.badge.exclamationmark")
                             .font(.system(size: 60))
                             .foregroundColor(Color.textSecondary)
@@ -96,7 +96,7 @@ struct PunchHistoryView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 12) {
+                        LazyVStack(spacing: .AppSpacing.medium) {
                             ForEach(viewModel.dailyRecords) { record in
                                 RecordCard(viewModel: viewModel, record: record)
                             }
@@ -127,7 +127,7 @@ struct RecordCard: View {
     let record: DailyRecord
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: .AppSpacing.small) {
             HStack {
                 Text(record.date).bold().font(.headline).foregroundColor(Color.textPrimary)
                 Spacer()
@@ -139,8 +139,8 @@ struct RecordCard: View {
         }
         .padding()
         .background(Color.cardBgColor)
-        .cornerRadius(15)
+        .cornerRadius(.AppCorner.button)
         //.overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2), lineWidth: 1))
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        //.shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
 }

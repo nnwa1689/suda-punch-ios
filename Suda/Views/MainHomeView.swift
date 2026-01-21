@@ -58,7 +58,7 @@ struct MainHomeView: View {
                         }
                         .tag(2)
                 }
-                .tint(.blue)
+                .tint(Color.primaryBlue)
             }
         }
         .onAppear {
@@ -90,7 +90,7 @@ struct FullScreenMessageView: View {
             Text(self.title)
                 .font(.headline)
                 .foregroundColor(.secondary)
-                .padding(10)
+                .padding(.AppSpacing.small)
             
             Text(self.message)
                 .font(.subheadline)
