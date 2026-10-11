@@ -187,45 +187,44 @@ class PunchInPageViewModel {
             return
         }
         
-        // 3. 開始定位流程
+        // 3. 開始定位流程：等待權限與定位結果 (最多 10 秒)，不再固定等待 1 秒
         self.isPunching = true
-        lm.requestLocation()
-        print("DEBUG: 正在等待座標...") // 👈 加這行
-        // 等待定位
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-        
-        // 4. 取得座標後發送請求
-        if let coords = lm.userLocation {
+        let coords: CLLocationCoordinate2D
+        do {
+            coords = try await lm.requestCurrentLocation()
             print("DEBUG: 拿到座標: \(coords.latitude), \(coords.longitude)")
-            do {
-                let request = PunchRequest(
-                    latitude: coords.latitude,
-                    longitude: coords.longitude,
-                    deviceUuid: self.deviceUuid,
-                    type: type,
-                    punchPointsId: point.id
-                )
-                
-                let response = try await punchService.postPunch(
-                    serverUrl: serverUrl,
-                    token: userToken,
-                    requestData: request
-                )
-                
-                self.alertMessage = response.message ?? ""
-                self.showAlert = true
-                await fetchLastPunch()
-                
-            } catch {
-                self.alertMessage = "打卡失敗：\(error.localizedDescription)"
-                self.showAlert = true
-            }
-        } else {
-            print("DEBUG: 5秒後仍拿不到座標")
-            self.alertMessage = "無法取得座標，請確認 GPS 權限"
+        } catch {
+            print("DEBUG: 定位失敗: \(error)")
+            self.alertMessage = "打卡失敗：\(error.localizedDescription)"
+            self.showAlert = true
+            return
+        }
+
+        // 4. 取得座標後發送請求
+        do {
+            let request = PunchRequest(
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+                deviceUuid: self.deviceUuid,
+                type: type,
+                punchPointsId: point.id
+            )
+
+            let response = try await punchService.postPunch(
+                serverUrl: serverUrl,
+                token: userToken,
+                requestData: request
+            )
+
+            self.alertMessage = response.message ?? ""
+            self.showAlert = true
+            await fetchLastPunch()
+
+        } catch {
+            self.alertMessage = "打卡失敗：\(error.localizedDescription)"
             self.showAlert = true
         }
-        
+
         // 5. 結束打卡狀態
         self.isPunching = false
     }
