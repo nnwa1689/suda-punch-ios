@@ -131,10 +131,10 @@ struct PunchInPageView: View {
                             ProgressView()
                                 .scaleEffect(1.5)
                             Text("正在驗證實體打卡裝置...")
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.textPrimary)
                         }
                         .padding(.AppSpacing.large)
-                        .background(.secondary)
+                        .background(Color.bgColor)
                         .cornerRadius(.AppCorner.large)
                     }
                 } else if viewModel.isPunching {
@@ -145,10 +145,10 @@ struct PunchInPageView: View {
                             ProgressView()
                                 .scaleEffect(1.5)
                             Text("正在驗證位置...")
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.textPrimary)
                         }
                         .padding(.AppSpacing.large)
-                        .background(.secondary)
+                        .background(Color.bgColor)
                         .cornerRadius(.AppCorner.large)
                     }
                 }
@@ -228,7 +228,7 @@ struct PunchPointPickerView: View {
                                         .foregroundColor(Color.primaryBlue)
                                     Text(point.name)
                                         .font(.body)
-                                        .foregroundColor(Color.textPrimary)
+                                        .foregroundColor(.primary)
                                 }
                                 Text("代號：\(point.id)")
                                     .font(.caption)

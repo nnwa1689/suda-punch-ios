@@ -5,6 +5,7 @@
 //  Created by Hazuya on 2025/12/25.
 //
 import SwiftUI
+import SwiftData
 
 struct LoginView: View {
     @Environment(\.colorScheme) var colorScheme
